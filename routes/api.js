@@ -12,6 +12,7 @@ router.get('/', function(req, res, next) {
     res.json({'message' : 'Hello World'});
 });
 
+// For Upload Test Purposes
 router.post('/s3/upload', async (req, res) => {
     try {
         if(!req.files){
@@ -39,11 +40,9 @@ router.post('/cloudformation/stack', async (req, res) => {
             return res.send({"message": "File not exists"});
         }
         const file = req.files.codeFile;
-        tempFile = process.cwd() + '/tmp/' + file.name;
-        await file.mv(tempFile);
         const params = {
             StackName: req.body.name,
-            TemplateBody: fs.readFileSync(tempFile, 'utf8')
+            TemplateBody: fs.readFileSync(file.tempFilePath, 'utf8')
             // TemplateURL: req.body.url
         };
         const command = new CreateStackCommand(params);
