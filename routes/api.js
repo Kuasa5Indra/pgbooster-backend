@@ -1,123 +1,21 @@
-const { PutObjectCommand } = require("@aws-sdk/client-s3");
-const { CreateStackCommand, ListStacksCommand, UpdateStackCommand,
-        DescribeStacksCommand, DeleteStackCommand } = require("@aws-sdk/client-cloudformation");
-const { s3Client } = require("../libs/s3Client");
-const { cloudformationClient } = require("../libs/cloudformationClient");
-const { successResponse, errorResponse } = require("../utils/Response");
-const { stackStatusFilter } = require("../utils/StackStatusFilter");
+const BucketController  = require("../controllers/BucketController");
+const StackController = require("../controllers/StackController");
+const { stackFormValidator, stackQueryValidator } = require("../validator/StackValidation");
+const { validation } = require('../middleware/ValidationResult');
 
 var express = require('express');
 var router = express.Router();
-var path = require('path');
-var fs = require('fs');
 
 router.get('/', function(req, res, next) {
     res.json({'message' : 'Hello World'});
 });
 
 // For Upload Test Purposes
-router.post('/buckets/upload', async (req, res) => {
-    try {
-        if(!req.files){
-            return res.status(400).send(errorResponse("Bad Request", "File not exists"));
-        }
-        const file = req.files.codeFile;
-        tempFile = process.cwd() + '/tmp/' + file.name;
-        await file.mv(tempFile);
-        const fileStream = fs.createReadStream(tempFile);
-        const uploadParams = {
-            Bucket: process.env.AWS_BUCKET_NAME,
-            Key: path.basename(tempFile),
-            Body: fileStream,
-        };
-        const data = await s3Client.send(new PutObjectCommand(uploadParams));
-        return res.send(successResponse("OK", "Upload Success", data));
-    } catch (error) {
-        console.log(error);
-        return res.status(500).send(errorResponse("Internal Server Error", "There is something wrong on server"));
-    }
-});
-
-router.get('/stacks', async (req, res) => {
-    try {
-        const params = {
-            StackStatusFilter: stackStatusFilter
-        };
-        const command = new ListStacksCommand(params);
-        const response = await cloudformationClient.send(command);
-        return res.send(successResponse("OK", "Success get list of stacks", response));
-    } catch (error) {
-        console.log(error);
-        return res.status(500).send(errorResponse("Internal Server Error", "There is something wrong on server"));
-    }
-});
-
-router.get('/stacks/describe', async (req, res) => {
-    try {
-        const params = {
-            StackName: req.query.name
-        };
-        const command = new DescribeStacksCommand(params);
-        const response = await cloudformationClient.send(command);
-        return res.send(successResponse("OK", "Success describe your stack", response));
-    } catch (error) {
-        console.log(error);
-        return res.status(500).send(errorResponse("Internal Server Error", "There is something wrong on server"));
-    }
-});
-
-router.post('/stacks', async (req, res) => {
-    try {
-        if(!req.files){
-            return res.status(400).send(errorResponse("Bad Request", "File not exists"));
-        }
-        const file = req.files.codeFile;
-        const params = {
-            StackName: req.body.name,
-            TemplateBody: fs.readFileSync(file.tempFilePath, 'utf8')
-            // TemplateURL: req.body.url
-        };
-        const command = new CreateStackCommand(params);
-        const response = await cloudformationClient.send(command);
-        return res.status(202).send(successResponse("Accepted", "Stack will be created soon", response));
-    } catch (error) {
-        console.log(error);
-        return res.status(500).send(errorResponse("Internal Server Error", "There is something wrong on server"));
-    }
-});
-
-router.post('/stacks/update', async (req, res) => {
-    try {
-        if(!req.files){
-            return res.status(400).send(errorResponse("Bad Request", "File not exists"));
-        }
-        const file = req.files.codeFile;
-        const params = {
-            StackName: req.body.name,
-            TemplateBody: fs.readFileSync(file.tempFilePath, 'utf8')
-            // TemplateURL: req.body.url
-        };
-        const command = new UpdateStackCommand(params);
-        const response = await cloudformationClient.send(command);
-        return res.status(202).send(successResponse("Accepted", "Stack will be updated soon", response));
-    } catch (error) {
-        console.log(error);
-        return res.status(500).send(errorResponse("Internal Server Error", "There is something wrong on server"));
-    }
-});
-
-router.delete('/stacks', async (req, res) => {
-    try {
-        const params = {
-            StackName: req.query.name
-        };
-        const command = new DeleteStackCommand(params);
-        const response = await cloudformationClient.send(command);
-        return res.send(successResponse("OK", "Success delete your stack"));
-    } catch (error) {
-        console.log(error);
-        return res.status(500).send(errorResponse("Internal Server Error", "There is something wrong on server"));
-    }
-});
+// router.post('/buckets/upload', BucketController.store);
+router.get('/stacks', StackController.index);
+router.get('/stacks/describe', stackQueryValidator, validation, StackController.show);
+router.post('/stacks', stackFormValidator, validation, StackController.store);
+router.post('/stacks/update', stackFormValidator, validation, StackController.update);
+router.delete('/stacks', stackQueryValidator, validation, StackController.destroy);
 
 module.exports = router;
