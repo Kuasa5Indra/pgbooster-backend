@@ -1,5 +1,6 @@
-const BucketController  = require("../controllers/BucketController");
+// const BucketController  = require("../controllers/BucketController");
 const StackController = require("../controllers/StackController");
+const InstanceController = require("../controllers/InstanceController");
 const { stackFormValidator, stackQueryValidator } = require("../validator/StackValidation");
 const { validation } = require('../middleware/ValidationResult');
 
@@ -17,5 +18,11 @@ router.get('/stacks/describe', stackQueryValidator, validation, StackController.
 router.post('/stacks', stackFormValidator, validation, StackController.store);
 router.post('/stacks/update', stackFormValidator, validation, StackController.update);
 router.delete('/stacks', stackQueryValidator, validation, StackController.destroy);
+router.get('/instances', InstanceController.index);
+router.get('/instances/:id', InstanceController.show);
+router.get('/instances/:id/start', InstanceController.startInstance);
+router.get('/instances/:id/stop', InstanceController.stopInstance);
+router.get('/instances/:id/reboot', InstanceController.rebootInstance);
+router.get('/instances/:id/terminate', InstanceController.terminateInstance);
 
 module.exports = router;
