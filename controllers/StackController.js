@@ -22,9 +22,6 @@ exports.index = async (req, res) => {
 
 exports.store = async (req, res) => {
     try {
-        if(!req.files){
-            return res.status(400).send(errorResponse("Bad Request", "File not exists"));
-        }
         const file = req.files.codeFile;
         const params = {
             StackName: req.body.name,
@@ -56,9 +53,6 @@ exports.show = async (req, res) => {
 
 exports.update = async (req, res) => {
     try {
-        if(!req.files){
-            return res.status(400).send(errorResponse("Bad Request", "File not exists"));
-        }
         const file = req.files.codeFile;
         const params = {
             StackName: req.body.name,
