@@ -1,4 +1,5 @@
 var express = require('express');
+var cors = require('cors');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
@@ -16,6 +17,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(fileupload({
     useTempFiles: true,
     tempFileDir: path.join(__dirname, 'tmp'),
+}));
+app.use(cors({
+    origin: '*'
 }));
 
 app.use('/api/v1', apiRouter);
