@@ -2,6 +2,7 @@
 const StackController = require("../controllers/StackController");
 const InstanceController = require("../controllers/InstanceController");
 const AutoScalingController = require("../controllers/AutoScalingController");
+const LoadBalancingController = require("../controllers/LoadBalancingController");
 const { stackFormValidator, stackQueryValidator } = require("../validator/StackValidation");
 const { validation } = require('../middleware/ValidationResult');
 
@@ -29,5 +30,7 @@ router.get('/autoscaling/instances', AutoScalingController.instances);
 router.get('/autoscaling/instances/:id', AutoScalingController.showInstance);
 router.get('/autoscaling/groups', AutoScalingController.groups);
 router.get('/autoscaling/groups/:name', AutoScalingController.showAutoScaling);
+router.get('/loadbalancing', LoadBalancingController.loadbalancer);
+router.get('/loadbalancing/groups', LoadBalancingController.groups);
 
 module.exports = router;
