@@ -1,6 +1,7 @@
 // const BucketController  = require("../controllers/BucketController");
 const StackController = require("../controllers/StackController");
 const InstanceController = require("../controllers/InstanceController");
+const AutoScalingController = require("../controllers/AutoScalingController");
 const { stackFormValidator, stackQueryValidator } = require("../validator/StackValidation");
 const { validation } = require('../middleware/ValidationResult');
 
@@ -24,5 +25,9 @@ router.get('/instances/:id/start', InstanceController.startInstance);
 router.get('/instances/:id/stop', InstanceController.stopInstance);
 router.get('/instances/:id/reboot', InstanceController.rebootInstance);
 router.get('/instances/:id/terminate', InstanceController.terminateInstance);
+router.get('/autoscaling/instances', AutoScalingController.instances);
+router.get('/autoscaling/instances/:id', AutoScalingController.showInstance);
+router.get('/autoscaling/groups', AutoScalingController.groups);
+router.get('/autoscaling/groups/:name', AutoScalingController.showAutoScaling);
 
 module.exports = router;
