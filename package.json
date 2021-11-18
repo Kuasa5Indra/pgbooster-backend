@@ -7,6 +7,7 @@
     "dev": "nodemon ./bin/www"
   },
   "dependencies": {
+    "@aws-sdk/client-auto-scaling": "^3.41.0",
     "@aws-sdk/client-cloudformation": "^3.38.0",
     "@aws-sdk/client-ec2": "^3.39.0",
     "@aws-sdk/client-s3": "^3.38.0",
