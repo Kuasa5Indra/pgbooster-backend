@@ -1,4 +1,5 @@
-const { DescribeAutoScalingInstancesCommand, DescribeAutoScalingGroupsCommand } = require("@aws-sdk/client-auto-scaling");
+const { DescribeAutoScalingInstancesCommand, DescribeAutoScalingGroupsCommand,
+        TerminateInstanceInAutoScalingGroupCommand } = require("@aws-sdk/client-auto-scaling");
 const { autoscalingClient } = require("../libs/autoscalingClient");
 const { successResponse, errorResponse } = require("../utils/Response");
 
@@ -46,6 +47,21 @@ exports.showAutoScaling = async(req, res) => {
         const command = new DescribeAutoScalingGroupsCommand(params);
         const response = await autoscalingClient.send(command);
         return res.send(successResponse("OK", "Success get autoscaling", response.AutoScalingGroups));
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send(errorResponse("Internal Server Error", "There is something wrong on server"));
+    }
+};
+
+exports.terminateInstance = async(req, res) => {
+    try {
+        const params = {
+            InstanceId: req.params.id,
+            ShouldDecrementDesiredCapacity: false
+        };
+        const command = new TerminateInstanceInAutoScalingGroupCommand(params);
+        const response = await autoscalingClient.send(command);
+        return res.send(successResponse("OK", "Success terminate instance", response.Activity));
     } catch (error) {
         console.log(error);
         return res.status(500).send(errorResponse("Internal Server Error", "There is something wrong on server"));
