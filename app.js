@@ -4,6 +4,8 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const fileupload = require("express-fileupload");
+const cron = require('node-cron');
+const fsExtra = require('fs-extra')
 
 var apiRouter = require('./routes/api');
 
@@ -23,5 +25,9 @@ app.use(cors({
 }));
 
 app.use('/api/v1', apiRouter);
+
+cron.schedule('0 0 * * Mon', () => {
+    fsExtra.emptyDirSync('tmp');
+});
 
 module.exports = app;
