@@ -3,7 +3,6 @@ const StackController = require("../controllers/StackController");
 const InstanceController = require("../controllers/InstanceController");
 const AutoScalingController = require("../controllers/AutoScalingController");
 const LoadBalancingController = require("../controllers/LoadBalancingController");
-const CognitoController = require("../controllers/CognitoController");
 const { stackFormValidator, stackQueryValidator } = require("../validator/StackValidation");
 const { instanceShowValidator, instanceOperationValidator } = require("../validator/InstanceValidation");
 const { validation } = require('../middleware/ValidationResult');
