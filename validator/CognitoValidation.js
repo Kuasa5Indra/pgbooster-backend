@@ -42,7 +42,7 @@ exports.changePasswordValidator = [
 
 exports.newPasswordValidator = [
     body('email').notEmpty().withMessage("Email is required").isEmail(),
-    body('password').notEmpty().withMessage("Password is required").isLength({ min: 8 }).withMessage("Minimum length of password must be 8"),
+    body('new_password').notEmpty().withMessage("Password is required").isLength({ min: 8 }).withMessage("Minimum length of password must be 8"),
     header('session').notEmpty().withMessage("Session is required")
 ];
 

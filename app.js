@@ -26,8 +26,8 @@ app.use(cors({
     origin: '*'
 }));
 
-app.use('/api/v1', apiRouter);
 app.use('/api/v1/auth', authApiRouter);
+app.use('/api/v1', apiRouter);
 app.use(clientErrorHandler);
 
 cron.schedule('0 0 * * Mon', () => {
