@@ -17,7 +17,7 @@ router.get('/', function(req, res, next) {
 
 // For Upload Test Purposes
 // router.post('/buckets/upload', BucketController.store);
-// router.use(verifyAccessToken);
+router.use(verifyAccessToken);
 router.get('/stacks', StackController.index);
 router.get('/stacks/describe/:name', stackQueryValidator, validation, StackController.show);
 router.post('/stacks', stackFormValidator, validation, StackController.store);
