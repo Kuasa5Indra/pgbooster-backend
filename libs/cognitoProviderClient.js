@@ -1,11 +1,11 @@
-const { EC2Client } = require("@aws-sdk/client-ec2");
+const { CognitoIdentityProviderClient } = require("@aws-sdk/client-cognito-identity-provider");
 const { fromEnv } = require("@aws-sdk/credential-provider-env");
 const dotenv = require('dotenv');
 dotenv.config();
 
-const ec2Client = new EC2Client({
+const cognitoProviderClient = new CognitoIdentityProviderClient({
     region: process.env.AWS_REGION || 'ap-southeast-1',
     credentials: fromEnv()
 });
 
-module.exports = { ec2Client }
+module.exports = { cognitoProviderClient }

@@ -6,6 +6,7 @@ const LoadBalancingController = require("../controllers/LoadBalancingController"
 const { stackFormValidator, stackQueryValidator } = require("../validator/StackValidation");
 const { instanceShowValidator, instanceOperationValidator } = require("../validator/InstanceValidation");
 const { validation } = require('../middleware/ValidationResult');
+const { verifyAccessToken } = require("../middleware/Authentication");
 
 var express = require('express');
 var router = express.Router();
@@ -16,6 +17,7 @@ router.get('/', function(req, res, next) {
 
 // For Upload Test Purposes
 // router.post('/buckets/upload', BucketController.store);
+router.use(verifyAccessToken);
 router.get('/stacks', StackController.index);
 router.get('/stacks/describe/:name', stackQueryValidator, validation, StackController.show);
 router.post('/stacks', stackFormValidator, validation, StackController.store);
