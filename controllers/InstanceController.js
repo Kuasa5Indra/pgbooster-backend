@@ -10,7 +10,7 @@ exports.index = async(req, res) => {
         return res.send(successResponse("OK", "Success get instances list", response.Reservations));
     } catch (error) {
         console.log(error);
-        return res.status(500).send(errorResponse("Internal Server Error", "There is something wrong on server"));
+        return res.status(error.$metadata.httpStatusCode).send(errorResponse(`Error on ${error.$fault}`, error.name));
     }
 };
 
@@ -24,7 +24,7 @@ exports.show = async(req, res) => {
         return res.send(successResponse("OK", "Success show instances", response.Reservations));
     } catch (error) {
         console.log(error);
-        return res.status(500).send(errorResponse("Internal Server Error", "There is something wrong on server"));
+        return res.status(error.$metadata.httpStatusCode).send(errorResponse(`Error on ${error.$fault}`, error.name));
     }
 };
 
@@ -38,7 +38,7 @@ exports.startInstance = async(req, res) => {
         return res.send(successResponse("OK", "Success start instance", response.StartingInstances));
     } catch (error) {
         console.log(error);
-        return res.status(500).send(errorResponse("Internal Server Error", "There is something wrong on server"));
+        return res.status(error.$metadata.httpStatusCode).send(errorResponse(`Error on ${error.$fault}`, error.name));
     }
 };
 
@@ -52,7 +52,7 @@ exports.stopInstance = async(req, res) => {
         return res.send(successResponse("OK", "Success stop instance", response.StoppingInstances));
     } catch (error) {
         console.log(error);
-        return res.status(500).send(errorResponse("Internal Server Error", "There is something wrong on server"));
+        return res.status(error.$metadata.httpStatusCode).send(errorResponse(`Error on ${error.$fault}`, error.name));
     }
 };
 
@@ -66,7 +66,7 @@ exports.rebootInstance = async(req, res) => {
         return res.send(successResponse("OK", "Success reboot instance", response));
     } catch (error) {
         console.log(error);
-        return res.status(500).send(errorResponse("Internal Server Error", "There is something wrong on server"));
+        return res.status(error.$metadata.httpStatusCode).send(errorResponse(`Error on ${error.$fault}`, error.name));
     }
 };
 
@@ -80,6 +80,6 @@ exports.terminateInstance = async(req, res) => {
         return res.send(successResponse("OK", "Success terminate instance", response.TerminatingInstances));
     } catch (error) {
         console.log(error);
-        return res.status(500).send(errorResponse("Internal Server Error", "There is something wrong on server"));
+        return res.status(error.$metadata.httpStatusCode).send(errorResponse(`Error on ${error.$fault}`, error.name));
     }
 };

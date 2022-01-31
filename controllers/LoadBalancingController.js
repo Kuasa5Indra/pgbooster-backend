@@ -9,7 +9,7 @@ exports.loadbalancer = async(req, res) => {
         return res.send(successResponse("OK", "Success get load balancers list", response.LoadBalancers));
     } catch (error) {
         console.log(error);
-        return res.status(500).send(errorResponse("Internal Server Error", "There is something wrong on server"));
+        return res.status(error.$metadata.httpStatusCode).send(errorResponse(`Error on ${error.$fault}`, error.name));
     }
 };
 
@@ -20,6 +20,6 @@ exports.groups = async(req, res) => {
         return res.send(successResponse("OK", "Success get target groups list", response.TargetGroups));
     } catch (error) {
         console.log(error);
-        return res.status(500).send(errorResponse("Internal Server Error", "There is something wrong on server"));
+        return res.status(error.$metadata.httpStatusCode).send(errorResponse(`Error on ${error.$fault}`, error.name));
     }
 };

@@ -10,7 +10,7 @@ exports.instances = async(req, res) => {
         return res.send(successResponse("OK", "Success get autoscaling instances list", response.AutoScalingInstances));
     } catch (error) {
         console.log(error);
-        return res.status(500).send(errorResponse("Internal Server Error", "There is something wrong on server"));
+        return res.status(error.$metadata.httpStatusCode).send(errorResponse(`Error on ${error.$fault}`, error.name));
     }
 };
 
@@ -21,7 +21,7 @@ exports.groups = async(req, res) => {
         return res.send(successResponse("OK", "Success get autoscaling groups list", response.AutoScalingGroups));
     } catch (error) {
         console.log(error);
-        return res.status(500).send(errorResponse("Internal Server Error", "There is something wrong on server"));
+        return res.status(error.$metadata.httpStatusCode).send(errorResponse(`Error on ${error.$fault}`, error.name));
     }
 };
 
@@ -35,7 +35,7 @@ exports.showInstance = async(req, res) => {
         return res.send(successResponse("OK", "Success get instance", response.AutoScalingInstances));
     } catch (error) {
         console.log(error);
-        return res.status(500).send(errorResponse("Internal Server Error", "There is something wrong on server"));
+        return res.status(error.$metadata.httpStatusCode).send(errorResponse(`Error on ${error.$fault}`, error.name));
     }
 };
 
@@ -49,7 +49,7 @@ exports.showAutoScaling = async(req, res) => {
         return res.send(successResponse("OK", "Success get autoscaling", response.AutoScalingGroups));
     } catch (error) {
         console.log(error);
-        return res.status(500).send(errorResponse("Internal Server Error", "There is something wrong on server"));
+        return res.status(error.$metadata.httpStatusCode).send(errorResponse(`Error on ${error.$fault}`, error.name));
     }
 };
 
@@ -64,6 +64,6 @@ exports.terminateInstance = async(req, res) => {
         return res.send(successResponse("OK", "Success terminate instance", response.Activity));
     } catch (error) {
         console.log(error);
-        return res.status(500).send(errorResponse("Internal Server Error", "There is something wrong on server"));
+        return res.status(error.$metadata.httpStatusCode).send(errorResponse(`Error on ${error.$fault}`, error.name));
     }
 };
