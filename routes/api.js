@@ -20,6 +20,9 @@ router.get('/', function(req, res, next) {
 router.use(verifyAccessToken);
 router.get('/stacks', StackController.index);
 router.get('/stacks/describe/:name', stackQueryValidator, validation, StackController.show);
+router.get('/stacks/describe/:name/events', stackQueryValidator, validation, StackController.showEvents);
+router.get('/stacks/describe/:name/resources', stackQueryValidator, validation, StackController.showResources);
+router.get('/stacks/describe/:name/template', stackQueryValidator, validation, StackController.showTemplate);
 router.post('/stacks', stackFormValidator, validation, StackController.store);
 router.post('/stacks/update', stackFormValidator, validation, StackController.update);
 router.delete('/stacks/:name', stackQueryValidator, validation, StackController.destroy);

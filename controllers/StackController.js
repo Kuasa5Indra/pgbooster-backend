@@ -1,5 +1,5 @@
-const { CreateStackCommand, ListStacksCommand, UpdateStackCommand,
-    DescribeStacksCommand, DeleteStackCommand, UpdateTerminationProtectionCommand } = require("@aws-sdk/client-cloudformation");
+const { CreateStackCommand, ListStacksCommand, UpdateStackCommand, DescribeStackEventsCommand, GetTemplateCommand,
+    DescribeStacksCommand, DeleteStackCommand, UpdateTerminationProtectionCommand, ListStackResourcesCommand } = require("@aws-sdk/client-cloudformation");
 const { cloudformationClient } = require("../libs/cloudformationClient");
 const { successResponse, errorResponse } = require("../utils/Response");
 const { stackStatusFilter } = require("../utils/StackStatusFilter");
@@ -47,6 +47,48 @@ exports.show = async (req, res) => {
         const command = new DescribeStacksCommand(params);
         const response = await cloudformationClient.send(command);
         return res.send(successResponse("OK", "Success describe your stack", response.Stacks));
+    } catch (error) {
+        console.log(error);
+        return res.status(error.$metadata.httpStatusCode).send(errorResponse(`Error on ${error.$fault}`, error.name));
+    }
+};
+
+exports.showEvents = async (req, res) => {
+    try {
+        const params = {
+            StackName: req.params.name
+        };
+        const command = new DescribeStackEventsCommand(params);
+        const response = await cloudformationClient.send(command);
+        return res.send(successResponse("OK", "Success describe your stack events", response.StackEvents));
+    } catch (error) {
+        console.log(error);
+        return res.status(error.$metadata.httpStatusCode).send(errorResponse(`Error on ${error.$fault}`, error.name));
+    }
+};
+
+exports.showResources = async (req, res) => {
+    try {
+        const params = {
+            StackName: req.params.name
+        };
+        const command = new ListStackResourcesCommand(params);
+        const response = await cloudformationClient.send(command);
+        return res.send(successResponse("OK", "Success describe your stack resources", response.StackResourceSummaries));
+    } catch (error) {
+        console.log(error);
+        return res.status(error.$metadata.httpStatusCode).send(errorResponse(`Error on ${error.$fault}`, error.name));
+    }
+};
+
+exports.showTemplate = async (req, res) => {
+    try {
+        const params = {
+            StackName: req.params.name
+        };
+        const command = new GetTemplateCommand(params);
+        const response = await cloudformationClient.send(command);
+        return res.send(successResponse("OK", "Success describe your stack template", response.TemplateBody));
     } catch (error) {
         console.log(error);
         return res.status(error.$metadata.httpStatusCode).send(errorResponse(`Error on ${error.$fault}`, error.name));
