@@ -3,7 +3,7 @@ const StackController = require("../controllers/StackController");
 const InstanceController = require("../controllers/InstanceController");
 const AutoScalingController = require("../controllers/AutoScalingController");
 const LoadBalancingController = require("../controllers/LoadBalancingController");
-const { stackFormValidator, stackQueryValidator } = require("../validator/StackValidation");
+const { stackFormValidator, stackQueryValidator, stackTemplateValidator } = require("../validator/StackValidation");
 const { instanceShowValidator, instanceOperationValidator } = require("../validator/InstanceValidation");
 const { validation } = require('../middleware/ValidationResult');
 const { verifyAccessToken } = require("../middleware/Authentication");
@@ -24,6 +24,7 @@ router.get('/stacks/describe/:name/events', stackQueryValidator, validation, Sta
 router.get('/stacks/describe/:name/resources', stackQueryValidator, validation, StackController.showResources);
 router.get('/stacks/describe/:name/template', stackQueryValidator, validation, StackController.showTemplate);
 router.post('/stacks', stackFormValidator, validation, StackController.store);
+router.post('/stacks/validate', stackTemplateValidator, validation, StackController.validateTemplate);
 router.post('/stacks/update', stackFormValidator, validation, StackController.update);
 router.delete('/stacks/:name', stackQueryValidator, validation, StackController.destroy);
 router.get('/stacks/update/:name', stackQueryValidator, validation, StackController.updateTerminationProtection);

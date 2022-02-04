@@ -1,4 +1,4 @@
-const { CreateStackCommand, ListStacksCommand, UpdateStackCommand, DescribeStackEventsCommand, GetTemplateCommand,
+const { CreateStackCommand, ListStacksCommand, UpdateStackCommand, DescribeStackEventsCommand, GetTemplateCommand, ValidateTemplateCommand,
     DescribeStacksCommand, DeleteStackCommand, UpdateTerminationProtectionCommand, ListStackResourcesCommand } = require("@aws-sdk/client-cloudformation");
 const { cloudformationClient } = require("../libs/cloudformationClient");
 const { successResponse, errorResponse } = require("../utils/Response");
@@ -38,6 +38,21 @@ exports.store = async (req, res) => {
         return res.status(error.$metadata.httpStatusCode).send(errorResponse(`Error on ${error.$fault}`, error.name));
     }
 };
+
+exports.validateTemplate = async (req, res) => {
+    try {
+        const file = req.files.codeFile;
+        const params = {
+            TemplateBody: fs.readFileSync(file.tempFilePath, 'utf8'),
+        };
+        const command = new ValidateTemplateCommand(params);
+        const response = await cloudformationClient.send(command);
+        return res.send(successResponse("Accepted", "Validation successful", response));
+    } catch (error) {
+        console.log(error);
+        return res.status(error.$metadata.httpStatusCode).send(errorResponse(`Error on ${error.$fault}`, error.name));
+    }
+}
 
 exports.show = async (req, res) => {
     try {
