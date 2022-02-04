@@ -33,11 +33,12 @@ exports.resetPasswordValidator = [
 exports.changePasswordValidator = [
     body('old_password').notEmpty().withMessage("Old Password is required").isLength({ min: 8 }).withMessage("Minimum length of password must be 8"),
     body('new_password').notEmpty().withMessage("New Password is required").isLength({ min: 8 }).withMessage("Minimum length of password must be 8")
-        .custom((value, {req}) => {
-            if(value == req.body.old_password){
-                throw new Error('New password must be different than old password');
-            }
-        }),
+        // .custom((value, {req}) => {
+        //     if(value == req.body.old_password){
+        //         throw new Error('New password must be different than old password');
+        //     }
+        //     return true;
+        // }),
 ];
 
 exports.newPasswordValidator = [
