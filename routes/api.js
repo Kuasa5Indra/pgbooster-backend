@@ -3,15 +3,17 @@ const StackController = require("../controllers/StackController");
 const InstanceController = require("../controllers/InstanceController");
 const AutoScalingController = require("../controllers/AutoScalingController");
 const LoadBalancingController = require("../controllers/LoadBalancingController");
+const RDSController = require("../controllers/RDSController");
 const { stackFormValidator, stackQueryValidator, stackTemplateValidator } = require("../validator/StackValidation");
 const { instanceShowValidator, instanceOperationValidator } = require("../validator/InstanceValidation");
+const { databaseShowValidator, databaseOperationValidator } = require("../validator/RDSValidation");
 const { validation } = require('../middleware/ValidationResult');
 const { verifyAccessToken } = require("../middleware/Authentication");
 
 var express = require('express');
 var router = express.Router();
 
-router.get('/', function(req, res, next) {
+router.get('/', function(req, res) {
     res.json({'message' : 'Hello World'});
 });
 
@@ -41,5 +43,10 @@ router.get('/autoscaling/groups', AutoScalingController.groups);
 router.get('/autoscaling/groups/:name', AutoScalingController.showAutoScaling);
 router.get('/loadbalancing', LoadBalancingController.loadbalancer);
 router.get('/loadbalancing/groups', LoadBalancingController.groups);
+router.get('/databases', RDSController.index);
+router.get('/databases/:dbInstanceId', databaseShowValidator, validation, RDSController.show);
+router.get('/databases/:dbInstanceId/start', databaseOperationValidator, validation, RDSController.startDbInstance);
+router.get('/databases/:dbInstanceId/stop', databaseOperationValidator, validation, RDSController.stopDbInstance);
+router.get('/databases/:dbInstanceId/reboot', databaseOperationValidator, validation, RDSController.rebootDbInstance);
 
 module.exports = router;
