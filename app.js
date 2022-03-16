@@ -10,6 +10,7 @@ const { clientErrorHandler } = require("./middleware/ErrorHandler");
 
 var apiRouter = require('./routes/api');
 var authApiRouter = require('./routes/auth-api');
+var superadminApiRouter = require('./routes/superadmin-api');
 
 var app = express();
 
@@ -21,11 +22,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(fileupload({
     useTempFiles: true,
     tempFileDir: path.join(__dirname, 'tmp'),
+    createParentPath: true,
 }));
 app.use(cors({
     origin: '*'
 }));
 
+app.use('/api/v1/superadmin', superadminApiRouter);
 app.use('/api/v1/auth', authApiRouter);
 app.use('/api/v1', apiRouter);
 app.use(clientErrorHandler);

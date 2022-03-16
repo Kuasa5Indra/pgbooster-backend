@@ -1,4 +1,4 @@
-const { body, header } = require("express-validator");
+const { body, header, param } = require("express-validator");
 
 exports.loginValidator = [
     body('email').notEmpty().withMessage("Email is required").isEmail(),
@@ -54,3 +54,20 @@ exports.resendCodeValidator = [
 exports.refreshTokenValidator = [
     header('refresh_token').notEmpty().withMessage("Refresh token is required to get new access token")
 ];
+
+exports.adminCreateUser = [
+    body('name').notEmpty().withMessage("Name is required").isString(),
+    body('email').notEmpty().withMessage("Email is required").isEmail(),
+    body('phone_number').notEmpty().withMessage("Phone Number is required").isMobilePhone(),
+    body('gender').notEmpty().withMessage("Gender is required").isIn(['male', 'female']),
+    body('birthdate').notEmpty().withMessage("Birthdate is required").isDate()
+]
+
+exports.adminUpdateUser = [
+    body('name').notEmpty().withMessage("Name is required").isString(),
+    body('email').notEmpty().withMessage("Email is required").isEmail(),
+    body('username').notEmpty().withMessage("Username is required as the username is your current email").isEmail(),
+    body('phone_number').notEmpty().withMessage("Phone Number is required").isMobilePhone(),
+    body('gender').notEmpty().withMessage("Gender is required").isIn(['male', 'female']),
+    body('birthdate').notEmpty().withMessage("Birthdate is required").isDate()
+]
