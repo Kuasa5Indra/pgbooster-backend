@@ -27,6 +27,7 @@ exports.verifyAccessToken = async (req, res, next) => {
 
     try {
         const payload = await verifier.verify(token);
+        req.sub = payload.sub;
         next();
     } catch {
         return res.status(401).send(errorResponse("Unauthorized", "Invalid token"));

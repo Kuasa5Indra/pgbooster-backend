@@ -71,3 +71,27 @@ exports.adminUpdateUser = [
     body('gender').notEmpty().withMessage("Gender is required").isIn(['male', 'female']),
     body('birthdate').notEmpty().withMessage("Birthdate is required").isDate()
 ]
+
+exports.setCredentialsValidator = [
+    body('config').custom((value, { req }) => {
+        if (!req.files) {
+            throw new Error("File is required");
+        }
+        const { config } = req.files;
+        if (config.name != 'config') {
+            throw new Error("File name must be config without file extension");
+        }
+        return true;
+    }),
+    body('credentials').custom((value, { req }) => {
+        if (!req.files) {
+            throw new Error("File is required");
+        }
+        const { credentials } = req.files;
+        if (credentials.name != 'credentials') {
+            throw new Error("File name must be credentials without file extension");
+        } 
+
+        return true;
+    }),
+]

@@ -1,5 +1,5 @@
 const { RDSClient } = require("@aws-sdk/client-rds");
-const { fromEnv } = require("@aws-sdk/credential-provider-env");
+const { fromIni, fromEnv } = require("@aws-sdk/credential-providers");
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -8,4 +8,15 @@ const rdsClient = new RDSClient({
     credentials: fromEnv()
 })
 
-module.exports = { rdsClient }
+const rdsClientIni = (sub) => {
+    const rdsClient = new RDSClient({
+        credentials: fromIni({
+            profile: "default",
+            filepath: process.cwd() + "/.aws/" + sub + "/credentials",
+            configFilepath: process.cwd() + "/.aws/" + sub + "/config",
+        }),
+    })
+    return rdsClient;
+}
+
+module.exports = { rdsClient, rdsClientIni }

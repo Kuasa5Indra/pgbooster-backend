@@ -1,10 +1,11 @@
 const { DescribeInstancesCommand, StartInstancesCommand, TerminateInstancesCommand,
         StopInstancesCommand, RebootInstancesCommand } = require("@aws-sdk/client-ec2");
-const { ec2Client } = require("../libs/ec2Client");
+const { ec2ClientIni } = require("../libs/ec2Client");
 const { successResponse, errorResponse } = require("../utils/Response");
 
 exports.index = async(req, res) => {
     try {
+        const ec2Client = ec2ClientIni(req.sub);
         const command = new DescribeInstancesCommand({});
         const response = await ec2Client.send(command);
         return res.send(successResponse("OK", "Success get instances list", response.Reservations));
@@ -16,6 +17,7 @@ exports.index = async(req, res) => {
 
 exports.show = async(req, res) => {
     try {
+        const ec2Client = ec2ClientIni(req.sub);
         const params = {
             InstanceIds: [req.params.id]
         };
@@ -30,6 +32,7 @@ exports.show = async(req, res) => {
 
 exports.startInstance = async(req, res) => {
     try {
+        const ec2Client = ec2ClientIni(req.sub);
         const params = {
             InstanceIds: [req.params.id]
         };
@@ -44,6 +47,7 @@ exports.startInstance = async(req, res) => {
 
 exports.stopInstance = async(req, res) => {
     try {
+        const ec2Client = ec2ClientIni(req.sub);
         const params = {
             InstanceIds: [req.params.id]
         };
@@ -58,6 +62,7 @@ exports.stopInstance = async(req, res) => {
 
 exports.rebootInstance = async(req, res) => {
     try {
+        const ec2Client = ec2ClientIni(req.sub);
         const params = {
             InstanceIds: [req.params.id]
         };
@@ -72,6 +77,7 @@ exports.rebootInstance = async(req, res) => {
 
 exports.terminateInstance = async(req, res) => {
     try {
+        const ec2Client = ec2ClientIni(req.sub);
         const params = {
             InstanceIds: [req.params.id]
         };

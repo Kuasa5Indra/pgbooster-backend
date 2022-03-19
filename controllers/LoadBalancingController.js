@@ -1,9 +1,10 @@
 const { DescribeLoadBalancersCommand, DescribeTargetGroupsCommand } = require("@aws-sdk/client-elastic-load-balancing-v2");
-const { loadbalancingClient } = require("../libs/loadbalancingClient");
+const { loadbalancingClientIni } = require("../libs/loadbalancingClient");
 const { successResponse, errorResponse } = require("../utils/Response");
 
 exports.loadbalancer = async(req, res) => {
     try {
+        const loadbalancingClient = loadbalancingClientIni(req.sub);
         const command = new DescribeLoadBalancersCommand({});
         const response = await loadbalancingClient.send(command);
         return res.send(successResponse("OK", "Success get load balancers list", response.LoadBalancers));
@@ -15,6 +16,7 @@ exports.loadbalancer = async(req, res) => {
 
 exports.groups = async(req, res) => {
     try {
+        const loadbalancingClient = loadbalancingClientIni(req.sub);
         const command = new DescribeTargetGroupsCommand({});
         const response = await loadbalancingClient.send(command);
         return res.send(successResponse("OK", "Success get target groups list", response.TargetGroups));

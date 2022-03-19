@@ -1,6 +1,6 @@
 const { CreateStackCommand, ListStacksCommand, UpdateStackCommand, DescribeStackEventsCommand, GetTemplateCommand, ValidateTemplateCommand,
     DescribeStacksCommand, DeleteStackCommand, UpdateTerminationProtectionCommand, ListStackResourcesCommand } = require("@aws-sdk/client-cloudformation");
-const { cloudformationClient } = require("../libs/cloudformationClient");
+const { cloudformationClientIni } = require("../libs/cloudformationClient");
 const { successResponse, errorResponse } = require("../utils/Response");
 const { stackStatusFilter } = require("../utils/StackStatusFilter");
 
@@ -8,6 +8,7 @@ var fs = require('fs');
 
 exports.index = async (req, res) => {
     try {
+        const cloudformationClient = cloudformationClientIni(req.sub);
         const params = {
             StackStatusFilter: stackStatusFilter
         };
@@ -22,6 +23,7 @@ exports.index = async (req, res) => {
 
 exports.store = async (req, res) => {
     try {
+        const cloudformationClient = cloudformationClientIni(req.sub);
         const file = req.files.codeFile;
         const params = {
             StackName: req.body.name,
@@ -41,6 +43,7 @@ exports.store = async (req, res) => {
 
 exports.validateTemplate = async (req, res) => {
     try {
+        const cloudformationClient = cloudformationClientIni(req.sub);
         const file = req.files.codeFile;
         const params = {
             TemplateBody: fs.readFileSync(file.tempFilePath, 'utf8'),
@@ -56,6 +59,7 @@ exports.validateTemplate = async (req, res) => {
 
 exports.show = async (req, res) => {
     try {
+        const cloudformationClient = cloudformationClientIni(req.sub);
         const params = {
             StackName: req.params.name
         };
@@ -70,6 +74,7 @@ exports.show = async (req, res) => {
 
 exports.showEvents = async (req, res) => {
     try {
+        const cloudformationClient = cloudformationClientIni(req.sub);
         const params = {
             StackName: req.params.name
         };
@@ -84,6 +89,7 @@ exports.showEvents = async (req, res) => {
 
 exports.showResources = async (req, res) => {
     try {
+        const cloudformationClient = cloudformationClientIni(req.sub);
         const params = {
             StackName: req.params.name
         };
@@ -98,6 +104,7 @@ exports.showResources = async (req, res) => {
 
 exports.showTemplate = async (req, res) => {
     try {
+        const cloudformationClient = cloudformationClientIni(req.sub);
         const params = {
             StackName: req.params.name
         };
@@ -112,6 +119,7 @@ exports.showTemplate = async (req, res) => {
 
 exports.update = async (req, res) => {
     try {
+        const cloudformationClient = cloudformationClientIni(req.sub);
         const file = req.files.codeFile;
         const params = {
             StackName: req.body.name,
@@ -130,6 +138,7 @@ exports.update = async (req, res) => {
 
 exports.destroy = async (req, res) => {
     try {
+        const cloudformationClient = cloudformationClientIni(req.sub);
         const params = {
             StackName: req.params.name
         };
@@ -144,6 +153,7 @@ exports.destroy = async (req, res) => {
 
 exports.updateTerminationProtection = async (req, res) => {
     try {
+        const cloudformationClient = cloudformationClientIni(req.sub);
         const params = {
             StackName: req.params.name,
             EnableTerminationProtection: req.query.protect

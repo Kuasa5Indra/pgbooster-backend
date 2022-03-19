@@ -2,7 +2,8 @@ const CognitoController = require("../controllers/CognitoController");
 const { verifyAccessToken } = require("../middleware/Authentication");
 const { loginValidator, registerValidator, confirmRegisterValidator,
         forgotPasswordValidator, resetPasswordValidator, changePasswordValidator,
-        newPasswordValidator, resendCodeValidator, refreshTokenValidator } = require("../validator/CognitoValidation");
+        newPasswordValidator, resendCodeValidator, refreshTokenValidator,
+        setCredentialsValidator } = require("../validator/CognitoValidation");
 const { validation } = require("../middleware/ValidationResult");
 
 var express = require('express');
@@ -16,6 +17,8 @@ router.post('/reset-password', resetPasswordValidator, validation, CognitoContro
 router.post('/change-password', verifyAccessToken, changePasswordValidator, validation, CognitoController.changePassword);
 router.post('/respond/new-password', newPasswordValidator, validation, CognitoController.newPasswordChallenge);
 router.get('/user', verifyAccessToken, CognitoController.getUser);
+router.get('/user/credentials', verifyAccessToken, CognitoController.getCredentials);
+router.post('/user/credentials', verifyAccessToken, setCredentialsValidator, validation, CognitoController.setCredentials);
 router.get('/refresh-token', refreshTokenValidator, validation, CognitoController.refreshToken);
 router.post('/resend-code', resendCodeValidator, validation, CognitoController.resendConfirmationCode);
 router.get('/logout', verifyAccessToken, CognitoController.signOut);
