@@ -1,9 +1,10 @@
 const { DescribeDBInstancesCommand, StartDBInstanceCommand, StopDBInstanceCommand, RebootDBInstanceCommand } = require("@aws-sdk/client-rds");
-const { rdsClient } = require("../libs/rdsClient");
+const { rdsClientIni } = require("../libs/rdsClient");
 const { successResponse, errorResponse } = require("../utils/Response");
 
 exports.index = async (req, res) => {
     try {
+        const rdsClient = rdsClientIni(req.sub);
         const command = new DescribeDBInstancesCommand({});
         const response = await rdsClient.send(command);
         return res.send(successResponse("OK", "Success get list of database instances", response.DBInstances));
@@ -15,6 +16,7 @@ exports.index = async (req, res) => {
 
 exports.show = async (req, res) => {
     try {
+        const rdsClient = rdsClientIni(req.sub);
         const params = {
             DBInstanceIdentifier: req.params.dbInstanceId
         };
@@ -29,6 +31,7 @@ exports.show = async (req, res) => {
 
 exports.startDbInstance = async (req, res) => {
     try {
+        const rdsClient = rdsClientIni(req.sub);
         const params = {
             DBInstanceIdentifier: req.params.dbInstanceId
         };
@@ -43,6 +46,7 @@ exports.startDbInstance = async (req, res) => {
 
 exports.rebootDbInstance = async (req, res) => {
     try {
+        const rdsClient = rdsClientIni(req.sub);
         const params = {
             DBInstanceIdentifier: req.params.dbInstanceId
         };
@@ -57,6 +61,7 @@ exports.rebootDbInstance = async (req, res) => {
 
 exports.stopDbInstance = async (req, res) => {
     try {
+        const rdsClient = rdsClientIni(req.sub);
         const params = {
             DBInstanceIdentifier: req.params.dbInstanceId
         };

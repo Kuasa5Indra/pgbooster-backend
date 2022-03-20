@@ -1,12 +1,18 @@
 const { SignUpCommand, GetUserCommand, InitiateAuthCommand, ConfirmSignUpCommand, 
     ForgotPasswordCommand, ConfirmForgotPasswordCommand, GlobalSignOutCommand,
-    ChangePasswordCommand, RespondToAuthChallengeCommand, ResendConfirmationCodeCommand } = require("@aws-sdk/client-cognito-identity-provider");
+    ChangePasswordCommand, RespondToAuthChallengeCommand, ResendConfirmationCodeCommand,
+    ListUsersCommand, AdminEnableUserCommand, AdminDisableUserCommand,
+    AdminGetUserCommand, AdminCreateUserCommand, AdminUpdateUserAttributesCommand,
+    AdminDeleteUserCommand } = require("@aws-sdk/client-cognito-identity-provider");
 const { cognitoProviderClient } = require("../libs/cognitoProviderClient");
 const { successResponse, errorResponse } = require("../utils/Response");
 const dotenv = require('dotenv');
 dotenv.config();
 
 const clientId = process.env.APP_CLIENT_ID;
+const userpoolId = process.env.USER_POOL_ID;
+
+const fs = require('fs');
 
 const getToken = (request) => {
     return request.headers.authorization.split(' ')[1];
@@ -210,6 +216,193 @@ exports.resendConfirmationCode = async(req, res) => {
         const command = new ResendConfirmationCodeCommand(params);
         const response = await cognitoProviderClient.send(command);
         return res.send(successResponse("OK", "New Confirmation Code has successfully sent, Please check your email", response.CodeDeliveryDetails));
+    } catch (error) {
+        console.log(error);
+        return res.status(error.$metadata.httpStatusCode).send(errorResponse(`Error on ${error.$fault}`, error.name));
+    }
+}
+
+exports.getCredentials = async(req, res) => {
+    try {
+        const userCredentialsDir = process.cwd() + '/.aws/' + req.sub;
+        fs.access(userCredentialsDir, (err) => {
+            if(err) {
+                return res.send(successResponse("OK", "Credential not exists", {alert: 'danger', alert_message: "You have not set up your AWS credentials"}));
+            }
+            return res.send(successResponse("OK", "Credential exists", {alert: 'success', alert_message: "You have alerady set up your AWS credentials"}));
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(400).send(errorResponse(`Error on client`, 'It seems something wrong on client'));
+    }
+}
+
+exports.setCredentials = async(req, res) => {
+    const { config, credentials } = req.files;
+    try {
+        await config.mv(process.cwd() + '/.aws/' + req.sub + '/' + config.name);
+        await credentials.mv(process.cwd() + '/.aws/' + req.sub + '/' + credentials.name);
+        return res.send(successResponse("OK", "Credentials successfully set", null));
+    } catch (error) {
+        console.log(error);
+        return res.status(400).send(errorResponse(`Error on client`, 'It seems something wrong on client'));
+    }
+}
+
+// Below is the superadmin function
+
+exports.listUsers = async(req, res) => {
+    try {
+        const params = {
+            UserPoolId: userpoolId,
+            Limit: 60
+        }
+        const command = new ListUsersCommand(params);
+        const response = await cognitoProviderClient.send(command);
+        return res.send(successResponse("OK", "Success get list users", response));
+    } catch (error) {
+        console.log(error);
+        return res.status(error.$metadata.httpStatusCode).send(errorResponse(`Error on ${error.$fault}`, error.name));
+    }
+}
+
+exports.adminEnableUser = async(req, res) => {
+    try {
+        const params = {
+            UserPoolId: userpoolId,
+            Username: req.params.username
+        }
+        const command = new AdminEnableUserCommand(params);
+        const response = await cognitoProviderClient.send(command);
+        return res.send(successResponse("OK", "Success enable user", null));
+    } catch (error) {
+        console.log(error);
+        return res.status(error.$metadata.httpStatusCode).send(errorResponse(`Error on ${error.$fault}`, error.name));
+    }
+}
+
+exports.adminDisableUser = async(req, res) => {
+    try {
+        const params = {
+            UserPoolId: userpoolId,
+            Username: req.params.username
+        }
+        const command = new AdminDisableUserCommand(params);
+        const response = await cognitoProviderClient.send(command);
+        return res.send(successResponse("OK", "Success disable user", null));
+    } catch (error) {
+        console.log(error);
+        return res.status(error.$metadata.httpStatusCode).send(errorResponse(`Error on ${error.$fault}`, error.name));
+    }
+}
+
+exports.adminGetUser = async(req, res) => {
+    try {
+        const params = {
+            UserPoolId: userpoolId,
+            Username: req.params.username
+        }
+        const command = new AdminGetUserCommand(params);
+        const response = await cognitoProviderClient.send(command);
+        return res.send(successResponse("OK", "Success get user", response));
+    } catch (error) {
+        console.log(error);
+        return res.status(error.$metadata.httpStatusCode).send(errorResponse(`Error on ${error.$fault}`, error.name));
+    }
+}
+
+exports.adminCreateUser = async(req, res) => {
+    try {
+        const params = {
+            DesiredDeliveryMediums: ["EMAIL"],
+            UserPoolId: userpoolId,
+            Username: req.body.email,
+            UserAttributes: [
+                {
+                    Name: "name",
+                    Value: req.body.name
+                },
+                {
+                    Name: "email",
+                    Value: req.body.email
+                },
+                {
+                    Name: "email_verified",
+                    Value: "True"
+                },
+                {
+                    Name: "birthdate",
+                    Value: req.body.birthdate
+                },
+                {
+                    Name: "phone_number",
+                    Value: req.body.phone_number
+                },
+                {
+                    Name: "gender",
+                    Value: req.body.gender
+                },
+            ]
+        }
+        const command = new AdminCreateUserCommand(params);
+        const response = await cognitoProviderClient.send(command);
+        return res.send(successResponse("OK", "Success create user", response.User));
+    } catch (error) {
+        console.log(error);
+        return res.status(error.$metadata.httpStatusCode).send(errorResponse(`Error on ${error.$fault}`, error.name));
+    }
+}
+
+exports.adminUpdateUserAttributes = async(req, res) => {
+    try {
+        const params = {
+            UserPoolId: userpoolId,
+            Username: req.body.username,
+            UserAttributes: [
+                {
+                    Name: "name",
+                    Value: req.body.name
+                },
+                {
+                    Name: "email",
+                    Value: req.body.email
+                },
+                {
+                    Name: "email_verified",
+                    Value: "True"
+                },
+                {
+                    Name: "birthdate",
+                    Value: req.body.birthdate
+                },
+                {
+                    Name: "phone_number",
+                    Value: req.body.phone_number
+                },
+                {
+                    Name: "gender",
+                    Value: req.body.gender
+                },
+            ]
+        }
+        const command = new AdminUpdateUserAttributesCommand(params);
+        const response = await cognitoProviderClient.send(command);
+        return res.send(successResponse("OK", "Success update user", response.User));
+    } catch (error) {
+        console.log(error);
+        return res.status(error.$metadata.httpStatusCode).send(errorResponse(`Error on ${error.$fault}`, error.name));
+    }
+}
+
+exports.adminDeleteUser = async(req, res) => {
+    try {
+        const params = {
+            UserPoolId: userpoolId,
+            Username: req.params.username
+        }
+        const command = new AdminDeleteUserCommand(params);
+        const response = await cognitoProviderClient.send(command);
+        return res.send(successResponse("OK", "Success delete user", null));
     } catch (error) {
         console.log(error);
         return res.status(error.$metadata.httpStatusCode).send(errorResponse(`Error on ${error.$fault}`, error.name));

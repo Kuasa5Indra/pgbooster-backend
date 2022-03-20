@@ -1,10 +1,11 @@
 const { DescribeAutoScalingInstancesCommand, DescribeAutoScalingGroupsCommand,
         TerminateInstanceInAutoScalingGroupCommand } = require("@aws-sdk/client-auto-scaling");
-const { autoscalingClient } = require("../libs/autoscalingClient");
+const { autoscalingClientIni } = require("../libs/autoscalingClient");
 const { successResponse, errorResponse } = require("../utils/Response");
 
 exports.instances = async(req, res) => {
     try {
+        const autoscalingClient = autoscalingClientIni(req.sub);
         const command = new DescribeAutoScalingInstancesCommand({});
         const response = await autoscalingClient.send(command);
         return res.send(successResponse("OK", "Success get autoscaling instances list", response.AutoScalingInstances));
@@ -16,6 +17,7 @@ exports.instances = async(req, res) => {
 
 exports.groups = async(req, res) => {
     try {
+        const autoscalingClient = autoscalingClientIni(req.sub);
         const command = new DescribeAutoScalingGroupsCommand({});
         const response = await autoscalingClient.send(command);
         return res.send(successResponse("OK", "Success get autoscaling groups list", response.AutoScalingGroups));
@@ -27,6 +29,7 @@ exports.groups = async(req, res) => {
 
 exports.showInstance = async(req, res) => {
     try {
+        const autoscalingClient = autoscalingClientIni(req.sub);
         const params = {
             InstanceIds: [req.params.id]
         };
@@ -41,6 +44,7 @@ exports.showInstance = async(req, res) => {
 
 exports.showAutoScaling = async(req, res) => {
     try {
+        const autoscalingClient = autoscalingClientIni(req.sub);
         const params = {
             AutoScalingGroupNames: [req.params.name]
         };
@@ -55,6 +59,7 @@ exports.showAutoScaling = async(req, res) => {
 
 exports.terminateInstance = async(req, res) => {
     try {
+        const autoscalingClient = autoscalingClientIni(req.sub);
         const params = {
             InstanceId: req.params.id,
             ShouldDecrementDesiredCapacity: false
