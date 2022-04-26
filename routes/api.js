@@ -48,5 +48,6 @@ router.get('/databases/:dbInstanceId', databaseShowValidator, validation, RDSCon
 router.get('/databases/:dbInstanceId/start', databaseOperationValidator, validation, RDSController.startDbInstance);
 router.get('/databases/:dbInstanceId/stop', databaseOperationValidator, validation, RDSController.stopDbInstance);
 router.get('/databases/:dbInstanceId/reboot', databaseOperationValidator, validation, RDSController.rebootDbInstance);
+router.get('/databases/:dbInstanceId/events', databaseOperationValidator, validation, RDSController.showEvents);
 
 module.exports = router;

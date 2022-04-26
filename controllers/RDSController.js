@@ -1,4 +1,5 @@
-const { DescribeDBInstancesCommand, StartDBInstanceCommand, StopDBInstanceCommand, RebootDBInstanceCommand } = require("@aws-sdk/client-rds");
+const { DescribeDBInstancesCommand, StartDBInstanceCommand, StopDBInstanceCommand, RebootDBInstanceCommand,
+        DescribeEventsCommand} = require("@aws-sdk/client-rds");
 const { rdsClientIni } = require("../libs/rdsClient");
 const { successResponse, errorResponse } = require("../utils/Response");
 
@@ -68,6 +69,22 @@ exports.stopDbInstance = async (req, res) => {
         const command = new StopDBInstanceCommand(params);
         const response = await rdsClient.send(command);
         return res.send(successResponse("OK", "Success stop database instance", response.DBInstance));
+    } catch (error) {
+        console.log(error);
+        return res.status(error.$metadata.httpStatusCode).send(errorResponse(`Error on ${error.$fault}`, error.name));
+    }
+};
+
+exports.showEvents = async (req, res) => {
+    try {
+        const rdsClient = rdsClientIni(req.sub);
+        const params = {
+            SourceIdentifier: req.params.dbInstanceId,
+            SourceType: 'db-instance'
+        };
+        const command = new DescribeEventsCommand(params);
+        const response = await rdsClient.send(command);
+        return res.send(successResponse("OK", "Success get database events", response.Events));
     } catch (error) {
         console.log(error);
         return res.status(error.$metadata.httpStatusCode).send(errorResponse(`Error on ${error.$fault}`, error.name));
