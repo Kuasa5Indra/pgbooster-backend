@@ -1,5 +1,6 @@
 const { DescribeDBInstancesCommand, StartDBInstanceCommand, StopDBInstanceCommand, RebootDBInstanceCommand,
-        DescribeEventsCommand} = require("@aws-sdk/client-rds");
+        DescribeEventsCommand, DescribeDBSnapshotsCommand, DeleteDBSnapshotCommand,
+        DescribeDBClusterSnapshotsCommand, DeleteDBClusterSnapshotCommand } = require("@aws-sdk/client-rds");
 const { rdsClientIni } = require("../libs/rdsClient");
 const { successResponse, errorResponse } = require("../utils/Response");
 
@@ -85,6 +86,60 @@ exports.showEvents = async (req, res) => {
         const command = new DescribeEventsCommand(params);
         const response = await rdsClient.send(command);
         return res.send(successResponse("OK", "Success get database events", response.Events));
+    } catch (error) {
+        console.log(error);
+        return res.status(error.$metadata.httpStatusCode).send(errorResponse(`Error on ${error.$fault}`, error.name));
+    }
+};
+
+exports.snapshots = async (req, res) => {
+    try {
+        const rdsClient = rdsClientIni(req.sub);
+        const command = new DescribeDBSnapshotsCommand({});
+        const response = await rdsClient.send(command);
+        return res.send(successResponse("OK", "Success get database snapshots", response.DBSnapshots));
+    } catch (error) {
+        console.log(error);
+        return res.status(error.$metadata.httpStatusCode).send(errorResponse(`Error on ${error.$fault}`, error.name));
+    }
+};
+
+exports.deleteSnapshot = async (req, res) => {
+    try {
+        const rdsClient = rdsClientIni(req.sub);
+        const params = {
+            DBSnapshotIdentifier: req.params.dbSnapshot
+        };
+        const command = new DeleteDBSnapshotCommand(params);
+        const response = await rdsClient.send(command);
+        return res.send(successResponse("OK", "Success delete database snapshot", response.DBSnapshot));
+    } catch (error) {
+        console.log(error);
+        return res.status(error.$metadata.httpStatusCode).send(errorResponse(`Error on ${error.$fault}`, error.name));
+    }
+};
+
+exports.clusterSnapshots = async (req, res) => {
+    try {
+        const rdsClient = rdsClientIni(req.sub);
+        const command = new DescribeDBClusterSnapshotsCommand({});
+        const response = await rdsClient.send(command);
+        return res.send(successResponse("OK", "Success get database cluster snapshots", response.DBClusterSnapshots));
+    } catch (error) {
+        console.log(error);
+        return res.status(error.$metadata.httpStatusCode).send(errorResponse(`Error on ${error.$fault}`, error.name));
+    }
+};
+
+exports.deleteClusterSnapshot = async (req, res) => {
+    try {
+        const rdsClient = rdsClientIni(req.sub);
+        const params = {
+            DBClusterSnapshotIdentifier: req.params.dbSnapshot
+        };
+        const command = new DeleteDBClusterSnapshotCommand(params);
+        const response = await rdsClient.send(command);
+        return res.send(successResponse("OK", "Success delete database cluster snapshot", response.DBClusterSnapshot));
     } catch (error) {
         console.log(error);
         return res.status(error.$metadata.httpStatusCode).send(errorResponse(`Error on ${error.$fault}`, error.name));

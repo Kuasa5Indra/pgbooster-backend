@@ -6,7 +6,7 @@ const LoadBalancingController = require("../controllers/LoadBalancingController"
 const RDSController = require("../controllers/RDSController");
 const { stackFormValidator, stackQueryValidator, stackTemplateValidator } = require("../validator/StackValidation");
 const { instanceShowValidator, instanceOperationValidator } = require("../validator/InstanceValidation");
-const { databaseShowValidator, databaseOperationValidator } = require("../validator/RDSValidation");
+const { databaseShowValidator, databaseOperationValidator, databaseSnapshotOperationValidator } = require("../validator/RDSValidation");
 const { validation } = require('../middleware/ValidationResult');
 const { verifyAccessToken } = require("../middleware/Authentication");
 
@@ -49,5 +49,9 @@ router.get('/databases/:dbInstanceId/start', databaseOperationValidator, validat
 router.get('/databases/:dbInstanceId/stop', databaseOperationValidator, validation, RDSController.stopDbInstance);
 router.get('/databases/:dbInstanceId/reboot', databaseOperationValidator, validation, RDSController.rebootDbInstance);
 router.get('/databases/:dbInstanceId/events', databaseOperationValidator, validation, RDSController.showEvents);
+router.get('/database/snapshots', RDSController.snapshots);
+router.delete('/database/snapshots/:dbSnapshot', databaseSnapshotOperationValidator, validation, RDSController.deleteSnapshot);
+router.get('/database-cluster/snapshots', RDSController.clusterSnapshots);
+router.delete('/database-cluster/snapshots/:dbSnapshot', databaseSnapshotOperationValidator, validation, RDSController.deleteClusterSnapshot);
 
 module.exports = router;
