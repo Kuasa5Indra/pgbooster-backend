@@ -1,6 +1,7 @@
 const { DescribeDBInstancesCommand, StartDBInstanceCommand, StopDBInstanceCommand, RebootDBInstanceCommand,
         DescribeEventsCommand, DescribeDBSnapshotsCommand, DeleteDBSnapshotCommand,
-        DescribeDBClusterSnapshotsCommand, DeleteDBClusterSnapshotCommand } = require("@aws-sdk/client-rds");
+        DescribeDBClusterSnapshotsCommand, DeleteDBClusterSnapshotCommand, DescribeDBClustersCommand,
+        StartDBClusterCommand, StopDBClusterCommand, RebootDBClusterCommand, FailoverDBClusterCommand } = require("@aws-sdk/client-rds");
 const { rdsClientIni } = require("../libs/rdsClient");
 const { successResponse, errorResponse } = require("../utils/Response");
 
@@ -61,6 +62,22 @@ exports.rebootDbInstance = async (req, res) => {
     }
 };
 
+exports.failoverDbInstance = async (req, res) => {
+    try {
+        const rdsClient = rdsClientIni(req.sub);
+        const params = {
+            DBInstanceIdentifier: req.params.dbInstanceId,
+            ForceFailover: true
+        };
+        const command = new RebootDBInstanceCommand(params);
+        const response = await rdsClient.send(command);
+        return res.send(successResponse("OK", "Success failover database instance", response.DBInstance));
+    } catch (error) {
+        console.log(error);
+        return res.status(error.$metadata.httpStatusCode).send(errorResponse(`Error on ${error.$fault}`, error.name));
+    }
+};
+
 exports.stopDbInstance = async (req, res) => {
     try {
         const rdsClient = rdsClientIni(req.sub);
@@ -70,6 +87,93 @@ exports.stopDbInstance = async (req, res) => {
         const command = new StopDBInstanceCommand(params);
         const response = await rdsClient.send(command);
         return res.send(successResponse("OK", "Success stop database instance", response.DBInstance));
+    } catch (error) {
+        console.log(error);
+        return res.status(error.$metadata.httpStatusCode).send(errorResponse(`Error on ${error.$fault}`, error.name));
+    }
+};
+
+exports.indexCluster = async (req, res) => {
+    try {
+        const rdsClient = rdsClientIni(req.sub);
+        const command = new DescribeDBClustersCommand({});
+        const response = await rdsClient.send(command);
+        return res.send(successResponse("OK", "Success get list of database clusters", response.DBClusters));
+    } catch (error) {
+        console.log(error);
+        return res.status(error.$metadata.httpStatusCode).send(errorResponse(`Error on ${error.$fault}`, error.name));
+    }
+};
+
+exports.showCluster = async (req, res) => {
+    try {
+        const rdsClient = rdsClientIni(req.sub);
+        const params = {
+            DBClusterIdentifier: req.params.dbClusterId
+        };
+        const command = new DescribeDBClustersCommand(params);
+        const response = await rdsClient.send(command);
+        return res.send(successResponse("OK", "Success get database cluster", response.DBClusters));
+    } catch (error) {
+        console.log(error);
+        return res.status(error.$metadata.httpStatusCode).send(errorResponse(`Error on ${error.$fault}`, error.name));
+    }
+};
+
+exports.startDbCluster = async (req, res) => {
+    try {
+        const rdsClient = rdsClientIni(req.sub);
+        const params = {
+            DBClusterIdentifier: req.params.dbClusterId
+        };
+        const command = new StartDBClusterCommand(params);
+        const response = await rdsClient.send(command);
+        return res.send(successResponse("OK", "Success start database cluster", response.DBCluster));
+    } catch (error) {
+        console.log(error);
+        return res.status(error.$metadata.httpStatusCode).send(errorResponse(`Error on ${error.$fault}`, error.name));
+    }
+};
+
+exports.rebootDbCluster = async (req, res) => {
+    try {
+        const rdsClient = rdsClientIni(req.sub);
+        const params = {
+            DBClusterIdentifier: req.params.dbClusterId
+        };
+        const command = new RebootDBClusterCommand(params);
+        const response = await rdsClient.send(command);
+        return res.send(successResponse("OK", "Success reboot database cluster", response.DBCluster));
+    } catch (error) {
+        console.log(error);
+        return res.status(error.$metadata.httpStatusCode).send(errorResponse(`Error on ${error.$fault}`, error.name));
+    }
+};
+
+exports.failoverDbCluster = async (req, res) => {
+    try {
+        const rdsClient = rdsClientIni(req.sub);
+        const params = {
+            DBClusterIdentifier: req.params.dbClusterId
+        };
+        const command = new FailoverDBClusterCommand(params);
+        const response = await rdsClient.send(command);
+        return res.send(successResponse("OK", "Success failover database cluster", response.DBCluster));
+    } catch (error) {
+        console.log(error);
+        return res.status(error.$metadata.httpStatusCode).send(errorResponse(`Error on ${error.$fault}`, error.name));
+    }
+};
+
+exports.stopDbCluster = async (req, res) => {
+    try {
+        const rdsClient = rdsClientIni(req.sub);
+        const params = {
+            DBClusterIdentifier: req.params.dbClusterId
+        };
+        const command = new StopDBClusterCommand(params);
+        const response = await rdsClient.send(command);
+        return res.send(successResponse("OK", "Success stop database cluster", response.DBCluster));
     } catch (error) {
         console.log(error);
         return res.status(error.$metadata.httpStatusCode).send(errorResponse(`Error on ${error.$fault}`, error.name));
@@ -86,6 +190,22 @@ exports.showEvents = async (req, res) => {
         const command = new DescribeEventsCommand(params);
         const response = await rdsClient.send(command);
         return res.send(successResponse("OK", "Success get database events", response.Events));
+    } catch (error) {
+        console.log(error);
+        return res.status(error.$metadata.httpStatusCode).send(errorResponse(`Error on ${error.$fault}`, error.name));
+    }
+};
+
+exports.showClusterEvents = async (req, res) => {
+    try {
+        const rdsClient = rdsClientIni(req.sub);
+        const params = {
+            SourceIdentifier: req.params.dbClusterId,
+            SourceType: 'db-cluster'
+        };
+        const command = new DescribeEventsCommand(params);
+        const response = await rdsClient.send(command);
+        return res.send(successResponse("OK", "Success get database cluster events", response.Events));
     } catch (error) {
         console.log(error);
         return res.status(error.$metadata.httpStatusCode).send(errorResponse(`Error on ${error.$fault}`, error.name));
