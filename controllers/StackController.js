@@ -76,11 +76,12 @@ exports.showEvents = async (req, res) => {
     try {
         const cloudformationClient = cloudformationClientIni(req.sub);
         const params = {
-            StackName: req.params.name
+            StackName: req.params.name,
+            NextToken: req.headers["next-token"]
         };
         const command = new DescribeStackEventsCommand(params);
         const response = await cloudformationClient.send(command);
-        return res.send(successResponse("OK", "Success describe your stack events", response.StackEvents));
+        return res.send(successResponse("OK", "Success describe your stack events", response));
     } catch (error) {
         console.log(error);
         return res.status(error.$metadata.httpStatusCode).send(errorResponse(`Error on ${error.$fault}`, error.name));
