@@ -9,6 +9,7 @@
   "dependencies": {
     "@aws-sdk/client-auto-scaling": "^3.41.0",
     "@aws-sdk/client-cloudformation": "^3.38.0",
+    "@aws-sdk/client-cloudwatch": "^3.112.0",
     "@aws-sdk/client-cognito-identity-provider": "^3.43.0",
     "@aws-sdk/client-ec2": "^3.39.0",
     "@aws-sdk/client-elastic-load-balancing-v2": "^3.41.0",

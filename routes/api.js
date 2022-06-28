@@ -4,9 +4,10 @@ const InstanceController = require("../controllers/InstanceController");
 const AutoScalingController = require("../controllers/AutoScalingController");
 const LoadBalancingController = require("../controllers/LoadBalancingController");
 const RDSController = require("../controllers/RDSController");
+const MetricsController = require("../controllers/MetricsController");
 const { stackFormValidator, stackQueryValidator, stackTemplateValidator } = require("../validator/StackValidation");
 const { instanceShowValidator, instanceOperationValidator } = require("../validator/InstanceValidation");
-const { databaseShowValidator, databaseOperationValidator, databaseSnapshotOperationValidator, 
+const { databaseShowValidator, databaseOperationValidator, databaseSnapshotOperationValidator,
     databaseClusterShowValidator, databaseClusterOperationValidator, } = require("../validator/RDSValidation");
 const { validation } = require('../middleware/ValidationResult');
 const { verifyAccessToken } = require("../middleware/Authentication");
@@ -20,6 +21,7 @@ router.get('/', function(req, res) {
 
 // For Upload Test Purposes
 // router.post('/buckets/upload', BucketController.store);
+// router.get('/metrics/test', MetricsController.metricsTest);
 router.use(verifyAccessToken);
 router.get('/stacks', StackController.index);
 router.get('/stacks/describe/:name', stackQueryValidator, validation, StackController.show);
@@ -62,5 +64,6 @@ router.get('/database-clusters/:dbClusterId/failover', databaseClusterOperationV
 router.get('/database-clusters/:dbClusterId/events', databaseClusterOperationValidator, validation, RDSController.showClusterEvents);
 router.get('/database-cluster/snapshots', RDSController.clusterSnapshots);
 router.delete('/database-cluster/snapshots/:dbSnapshot', databaseSnapshotOperationValidator, validation, RDSController.deleteClusterSnapshot);
+router.get('/metrics/db', MetricsController.metricsDb);
 
 module.exports = router;
