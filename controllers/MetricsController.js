@@ -16,7 +16,6 @@ exports.metricsDb = async(req, res) => {
             ScanBy: "TimestampAscending",
             MetricDataQueries: getMetricsDB(req.query.period)
         };
-        console.log(params);
         const command = new GetMetricDataCommand(params);
         const response = await cloudWatchClient.send(command);
         return res.send(successResponse("OK", "Success get database metrics", response));
