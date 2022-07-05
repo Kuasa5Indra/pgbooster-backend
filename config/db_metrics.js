@@ -5,7 +5,7 @@ const getMetricsDB = (period = 300) => {
             Label: "DB Connections",
             MetricStat: {
                 Period: period,
-                Stat: "SampleCount",
+                Stat: "Maximum",
                 Unit: "Count",
                 Metric: {
                     MetricName: "DatabaseConnections",
